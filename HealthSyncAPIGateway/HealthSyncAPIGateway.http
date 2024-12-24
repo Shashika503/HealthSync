@@ -1,0 +1,6 @@
+@HealthSyncAPIGateway_HostAddress = http://localhost:5089
+
+GET {{HealthSyncAPIGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
