@@ -1,10 +1,21 @@
 using AggregatorService.Handlers;
 using AggregatorService.Jobs;
 using AggregatorService.Models;
+using AggregatorService.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog for Logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Logs to the console
+    .WriteTo.File("logs/aggregator-service.log", rollingInterval: RollingInterval.Day) // Logs to a file
+    .CreateLogger();
+
+// Add Serilog as the logging provider
+builder.Host.UseSerilog();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -44,35 +55,3 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
-
-// AggregationHostedService Implementation
-public class AggregationHostedService : BackgroundService
-{
-    private readonly IServiceProvider _serviceProvider;
-    private readonly bool _isTestMode;
-
-    public AggregationHostedService(IServiceProvider serviceProvider, bool isTestMode = false)
-    {
-        _serviceProvider = serviceProvider;
-        _isTestMode = isTestMode;
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        do
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var aggregationJob = scope.ServiceProvider.GetRequiredService<AggregationJob>();
-                await aggregationJob.Run(); // Execute the aggregation job
-            }
-
-            if (_isTestMode) break; // Exit the loop for testing
-
-            // Wait 24 hours before the next execution
-            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
-        } while (!stoppingToken.IsCancellationRequested);
-    }
-
-
-}
