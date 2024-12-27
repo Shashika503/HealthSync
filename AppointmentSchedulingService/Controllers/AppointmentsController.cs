@@ -35,6 +35,10 @@ public class AppointmentsController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreateAppointment([FromBody] BookAppointmentCommand command)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         await _bookHandler.Handle(command);
         return Ok("Appointment booked successfully.");
     }
@@ -43,6 +47,10 @@ public class AppointmentsController : ControllerBase
     [HttpPut("update/{appointmentId}")]
     public async Task<IActionResult> UpdateAppointment(string appointmentId, [FromBody] UpdateAppointmentCommand command)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         command.AppointmentId = appointmentId;
         await _updateHandler.Handle(command);
         return Ok("Appointment updated successfully.");
@@ -52,6 +60,10 @@ public class AppointmentsController : ControllerBase
     [HttpDelete("cancel/{appointmentId}")]
     public async Task<IActionResult> CancelAppointment(string appointmentId)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var command = new CancelAppointmentCommand { AppointmentId = appointmentId };
         await _cancelHandler.Handle(command);
         return Ok("Appointment cancelled successfully.");
@@ -61,6 +73,10 @@ public class AppointmentsController : ControllerBase
     [HttpGet("doctor/{doctorId}")]
     public async Task<IActionResult> GetAppointmentsByDoctor(string doctorId)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var query = new GetAppointmentsByDoctorQuery { DoctorId = doctorId };
         var appointments = await _doctorHandler.Handle(query);
         return Ok(appointments);
@@ -70,6 +86,10 @@ public class AppointmentsController : ControllerBase
     [HttpGet("appointmentsbydate")]
     public async Task<IActionResult> GetAppointmentsByDate([FromQuery] DateTime date)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         var query = new GetAppointmentsByDateQuery { AppointmentDate = date };
         var appointments = await _dateHandler.Handle(query);
         return Ok(appointments);

@@ -1,13 +1,24 @@
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using NotificationService.Handlers.CommandHandlers;
 using NotificationService.Models;
 using NotificationService.Services;
+using NotificationService.Validations;
+using NotificationService.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+
+
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+
+
+builder.Services.AddTransient<IValidator<SendReminderCommand>, NotificationValidator>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

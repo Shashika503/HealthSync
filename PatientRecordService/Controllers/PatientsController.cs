@@ -36,6 +36,10 @@ namespace PatientRecordService.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(AddPatientCommand command)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             await _addPatientHandler.Handle(command);
             return Ok("Patient added successfully");
         }
@@ -43,6 +47,10 @@ namespace PatientRecordService.Controllers
         [HttpGet("getallpatients")]
         public async Task<IActionResult> GetAll()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var query = new GetAllPatientsQuery();
             var patients = await _getAllPatientsHandler.Handle(query);
             return Ok(patients);
@@ -61,6 +69,10 @@ namespace PatientRecordService.Controllers
         [HttpPut("patient/{id}")]
         public async Task<IActionResult> Update(string id, UpdatePatientCommand command)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             command.PatientId = id;
             await _updatePatientHandler.Handle(command);
             return Ok("Patient updated successfully");
@@ -69,6 +81,10 @@ namespace PatientRecordService.Controllers
         [HttpDelete("patient/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var command = new DeletePatientCommand { PatientId = id };
             await _deletePatientHandler.Handle(command);
             return Ok("Patient deleted successfully");

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace PatientRecordService.Models
+namespace AggregatorService.Models
 {
     public class Patient
     {

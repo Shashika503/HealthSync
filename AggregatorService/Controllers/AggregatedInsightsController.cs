@@ -21,6 +21,10 @@ namespace AggregatorService.Controllers
         [HttpGet("latest")]
         public async Task<IActionResult> GetLatestInsights()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var latestInsight = await _insightsCollection
                 .Find(Builders<AggregatedInsight>.Filter.Empty)
                 .SortByDescending(i => i.Id)
@@ -38,6 +42,10 @@ namespace AggregatorService.Controllers
         [HttpGet("doctors")]
         public async Task<IActionResult> GetAppointmentsPerDoctor()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var latestInsight = await _insightsCollection
                 .Find(Builders<AggregatedInsight>.Filter.Empty)
                 .SortByDescending(i => i.Id)
@@ -55,6 +63,10 @@ namespace AggregatorService.Controllers
         [HttpGet("frequency")]
         public async Task<IActionResult> GetAppointmentFrequency()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var latestInsight = await _insightsCollection
                 .Find(Builders<AggregatedInsight>.Filter.Empty)
                 .SortByDescending(i => i.Id)
@@ -72,6 +84,10 @@ namespace AggregatorService.Controllers
         [HttpGet("conditions")]
         public async Task<IActionResult> GetConditionsBySpecialty()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var latestInsight = await _insightsCollection
                 .Find(Builders<AggregatedInsight>.Filter.Empty)
                 .SortByDescending(i => i.Id)

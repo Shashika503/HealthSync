@@ -2,6 +2,9 @@ using AggregatorService.Handlers;
 using AggregatorService.Jobs;
 using AggregatorService.Models;
 using AggregatorService.Services;
+using AggregatorService.Validations;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
@@ -18,7 +21,11 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+
+
+builder.Services.AddTransient<IValidator<AggregatedInsight>, AggregatedInsightValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

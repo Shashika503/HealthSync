@@ -20,10 +20,9 @@ public class NotificationsController : ControllerBase
     {
         try
         {
-            // Validate the incoming request
-            if (command == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Command cannot be null.");
+                return BadRequest(ModelState);
             }
 
             if (string.IsNullOrEmpty(command.AppointmentId) ||

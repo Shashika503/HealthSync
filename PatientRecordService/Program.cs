@@ -1,13 +1,28 @@
 using AppointmentSchedulingService.Models;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using PatientRecordService.Handlers.CommandHandlers;
 using PatientRecordService.Handlers.QueryHandlers;
+using PatientRecordService.Validations;
+using PatientRecordService.Models;
+using PatientRecordService.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+
+builder.Services.AddTransient<IValidator<AddPatientCommand>, AddPatientValidator>();
+builder.Services.AddTransient<IValidator<UpdatePatientCommand>, UpdatePatientValidator>();
+builder.Services.AddTransient<IValidator<DeletePatientCommand>, DeletePatientValidator>();
+
 builder.Services.AddControllers();
+
+
+
 
 // Swagger/OpenAPI configuration
 builder.Services.AddEndpointsApiExplorer();
@@ -15,6 +30,7 @@ builder.Services.AddSwaggerGen();
 
 // Add MongoDB settings from appsettings.json
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+
 
 // Register MongoClient as a singleton
 builder.Services.AddSingleton<IMongoClient>(sp =>

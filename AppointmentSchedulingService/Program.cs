@@ -3,12 +3,22 @@ using MongoDB.Driver;
 using AppointmentSchedulingService.Models;
 using AppointmentSchedulingService.Handlers.CommandHandlers;
 using AppointmentSchedulingService.Handlers.QueryHandlers;
+using AppointmentSchedulingService.Validations;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using AppointmentSchedulingService.Commands;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+
+
+builder.Services.AddTransient<IValidator<BookAppointmentCommand>, AddAppointmentValidator>();
+builder.Services.AddTransient<IValidator<UpdateAppointmentCommand>, UpdateAppointmentValidator>();
+builder.Services.AddTransient<IValidator<CancelAppointmentCommand>, CancelAppointmentValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
