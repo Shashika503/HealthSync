@@ -8,6 +8,7 @@ namespace NotificationService.Commands
         public string PatientId { get; set; }
         public string PatientEmail { get; set; }
         public string NotificationType { get; set; } // Reminder or Follow-Up
+        public string Status { get; set; }
         public DateTime ScheduledTime { get; set; }
     }
 }

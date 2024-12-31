@@ -8,22 +8,21 @@ using FluentValidation;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog for Logging
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console() // Logs to the console
-    .WriteTo.File("logs/aggregator-service.log", rollingInterval: RollingInterval.Day) // Logs to a file
+    .WriteTo.Console()
+    .WriteTo.File("logs/aggregator-service.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-// Add Serilog as the logging provider
 builder.Host.UseSerilog();
 
 // Add services to the container
 builder.Services.AddControllers()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
-
 
 builder.Services.AddTransient<IValidator<AggregatedInsight>, AggregatedInsightValidator>();
 builder.Services.AddEndpointsApiExplorer();
@@ -41,6 +40,13 @@ builder.Services.AddScoped(sp =>
     var client = sp.GetRequiredService<IMongoClient>();
     var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
     return client.GetDatabase(settings.DatabaseName);
+});
+
+// Redshift Configuration
+builder.Services.AddSingleton<NpgsqlConnection>(sp =>
+{
+    var redshiftConnectionString = builder.Configuration.GetSection("DatabaseSettings:RedshiftConnectionString").Value;
+    return new NpgsqlConnection(redshiftConnectionString);
 });
 
 // Register Aggregation Services
